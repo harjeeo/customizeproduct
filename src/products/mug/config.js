@@ -32,19 +32,19 @@ export const mug = {
           id: "front",
           label: "Front",
           mockup: previewFront,
-          printArea: { xPct: 35.0, yPct: 38.0, widthPct: 36.0, heightPct: 26.0 },
+          printArea: { xPct: 31.0, yPct: 27.0, widthPct: 40.0, heightPct: 50.0 },
         },
         {
           id: "left",
           label: "Left",
           mockup: previewLeft,
-          printArea: { xPct: 40.0, yPct: 38.0, widthPct: 34.0, heightPct: 26.0 },
+          printArea: { xPct: 40.0, yPct: 27.0, widthPct: 38.0, heightPct: 50.0 },
         },
         {
           id: "right",
           label: "Right",
           mockup: previewRight,
-          printArea: { xPct: 27.0, yPct: 38.0, widthPct: 34.0, heightPct: 26.0 },
+          printArea: { xPct: 24.0, yPct: 27.0, widthPct: 38.0, heightPct: 50.0 },
         },
       ],
       // Bends the flat 2D Preview's design slightly so it reads as wrapped
