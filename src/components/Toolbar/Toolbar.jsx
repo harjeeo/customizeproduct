@@ -36,7 +36,7 @@ function IconButton({ icon, onClick, disabled, title, active }) {
   );
 }
 
-export default function Toolbar({ panelOpen, onTogglePanel }) {
+export default function Toolbar({ panelOpen, onTogglePanel, onBack }) {
   const canvasApi = useProductStore((s) => s.canvasApi);
   const view = useProductStore((s) => s.view);
   const setView = useProductStore((s) => s.setView);
@@ -45,7 +45,7 @@ export default function Toolbar({ panelOpen, onTogglePanel }) {
   return (
     <div className="flex h-14 w-full shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4">
       <div className="flex items-center gap-1">
-        <IconButton icon={ArrowLeft01Icon} title="Back" />
+        <IconButton icon={ArrowLeft01Icon} title="Back to products" onClick={onBack} />
         <div className="mx-1 h-6 w-px bg-neutral-200" />
         <IconButton icon={InformationCircleIcon} title="Info" />
         <IconButton icon={Undo02Icon} title="Undo" />

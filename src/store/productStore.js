@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { tshirt } from "../products/tshirt/config";
 
 export const useProductStore = create((set, get) => ({
-  product: tshirt,
-  activeSideId: tshirt.sides[0].id,
+  // null until a product is picked in the catalog screen
+  product: null,
+  activeSideId: null,
   view: "edit", // "edit" | "preview"
   zoom: 100,
   pan: { x: 0, y: 0 },
@@ -20,6 +20,30 @@ export const useProductStore = create((set, get) => ({
   canvasApi: null,
 
   setCanvasApi: (api) => set({ canvasApi: api }),
+
+  openProduct: (config) =>
+    set({
+      product: config,
+      activeSideId: config.sides[0].id,
+      view: "edit",
+      zoom: 100,
+      pan: { x: 0, y: 0 },
+      panMode: false,
+      selectedLayerId: null,
+      panelValues: null,
+      selectedLayerMeta: null,
+      canvasApi: null,
+    }),
+
+  closeProduct: () =>
+    set({
+      product: null,
+      activeSideId: null,
+      selectedLayerId: null,
+      panelValues: null,
+      selectedLayerMeta: null,
+      canvasApi: null,
+    }),
 
   setActiveSide: (sideId) =>
     set({ activeSideId: sideId, selectedLayerId: null, panelValues: null, selectedLayerMeta: null }),
@@ -47,6 +71,6 @@ export const useProductStore = create((set, get) => ({
 
   getActiveSide: () => {
     const state = get();
-    return state.product.sides.find((s) => s.id === state.activeSideId);
+    return state.product?.sides.find((s) => s.id === state.activeSideId) ?? null;
   },
 }));
