@@ -125,20 +125,27 @@ export default function PreviewView() {
           {curved && (
             <svg width="0" height="0" style={{ position: "absolute" }}>
               <defs>
-                <filter id={bumpId} x="-15%" y="-40%" width="130%" height="180%">
+                <filter
+                  id={bumpId}
+                  x="-15%"
+                  y="-40%"
+                  width="130%"
+                  height="180%"
+                  primitiveUnits="objectBoundingBox"
+                >
                   <feImage
                     href={getCylinderBumpDataUrl()}
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
+                    x="-0.15"
+                    y="-0.4"
+                    width="1.3"
+                    height="1.8"
                     preserveAspectRatio="none"
                     result="bump"
                   />
                   <feDisplacementMap
                     in="SourceGraphic"
                     in2="bump"
-                    scale="22"
+                    scale="0.15"
                     xChannelSelector="R"
                     yChannelSelector="G"
                   />
