@@ -28,8 +28,8 @@ export const tshirt = {
       // measured against the same physical 12in x 16in box as printArea above.
       previewMockup: previewFront,
       previewPrintArea: {
-        xPct: 35.2,
-        yPct: 27.0,
+        xPct: 35.5,
+        yPct: 26.0,
         widthPct: 30.0,
         heightPct: 40.0,
       },
@@ -51,8 +51,8 @@ export const tshirt = {
       },
       previewMockup: previewBack,
       previewPrintArea: {
-        xPct: 35.4,
-        yPct: 27.0,
+        xPct: 35.5,
+        yPct: 25.0,
         widthPct: 30.0,
         heightPct: 40.0,
       },
