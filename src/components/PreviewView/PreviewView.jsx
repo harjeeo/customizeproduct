@@ -49,64 +49,18 @@ export default function PreviewView() {
                 transformOrigin: "center center",
               }}
             >
-              {/* mix-blend-mode and filter fight each other when set on the
-                  same element (the filter's output gets silently dropped),
-                  so the warp lives on the inner img and the blend on this
-                  outer wrapper: warp first, then blend the already-warped
-                  pixels against the fabric behind for a printed-on look. */}
-              <div className="h-full w-full" style={{ mixBlendMode: "multiply" }}>
-                <img
-                  src={layer.dataUrl}
-                  alt=""
-                  className="h-full w-full select-none"
-                  style={{
-                    objectFit: "fill",
-                    filter: `url(#fabric-warp-${activeSideId})`,
-                  }}
-                  draggable={false}
-                />
-              </div>
+              {/* mix-blend-mode lets the fabric's own shading show through
+                  the design for a printed-on look, without warping it. */}
+              <img
+                src={layer.dataUrl}
+                alt=""
+                className="h-full w-full select-none"
+                style={{ objectFit: "fill", mixBlendMode: "multiply" }}
+                draggable={false}
+              />
             </div>
           ))}
         </div>
-
-        <svg width="0" height="0" style={{ position: "absolute" }}>
-          <defs>
-            {product.sides.map((side) => (
-              <filter
-                key={side.id}
-                id={`fabric-warp-${side.id}`}
-                x="-15%"
-                y="-15%"
-                width="130%"
-                height="130%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feImage
-                  href={side.previewDisplacementMap}
-                  x="0"
-                  y="0"
-                  width="100%"
-                  height="100%"
-                  preserveAspectRatio="none"
-                  result="dispMapRaw"
-                />
-                <feGaussianBlur
-                  in="dispMapRaw"
-                  stdDeviation="2.5"
-                  result="dispMap"
-                />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="dispMap"
-                  scale="9"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                />
-              </filter>
-            ))}
-          </defs>
-        </svg>
       </div>
     </div>
   );

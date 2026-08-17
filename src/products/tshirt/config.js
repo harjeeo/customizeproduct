@@ -2,8 +2,6 @@ import tshirtFront from "./tshirt-front.svg";
 import tshirtBack from "./tshirt-back.svg";
 import previewFront from "./preview-front.jpg";
 import previewBack from "./preview-back.jpg";
-import displaceFront from "./displace-front.png";
-import displaceBack from "./displace-back.png";
 
 // Print area box is defined in % of the mockup canvas (source viewBox 0 0 1000 1000),
 // plus its real-world size in inches so the right panel can show W/H in inches.
@@ -33,9 +31,6 @@ export const tshirt = {
         widthPct: 30.0,
         heightPct: 40.0,
       },
-      // grayscale fold/wrinkle map cropped from the print area, used to warp
-      // the design via an SVG feDisplacementMap filter for a fabric-fit look.
-      previewDisplacementMap: displaceFront,
     },
     {
       id: "back",
@@ -56,7 +51,6 @@ export const tshirt = {
         widthPct: 30.0,
         heightPct: 40.0,
       },
-      previewDisplacementMap: displaceBack,
     },
   ],
 };
