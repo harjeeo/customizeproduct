@@ -6,6 +6,8 @@ export default function SideSelector() {
   const activeSideId = useProductStore((s) => s.activeSideId);
   const setActiveSide = useProductStore((s) => s.setActiveSide);
 
+  if (product.sides.length < 2) return null;
+
   return (
     <div className="pointer-events-auto flex gap-2 rounded-full bg-white p-1 shadow-md">
       {product.sides.map((side) => (
