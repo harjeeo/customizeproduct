@@ -10,6 +10,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { tshirt } from "./tshirt/config";
 import { phonecase } from "./phonecase/config";
+import { mug } from "./mug/config";
 
 // Every product the catalog can show. "config" is only present once a
 // product's editor config has actually been built — everything else shows
@@ -18,7 +19,7 @@ export const productRegistry = [
   { id: "tshirt", name: "T-Shirt", icon: TShirtIcon, config: tshirt },
   { id: "phonecase", name: "Phone Case", icon: SmartPhone01Icon, config: phonecase },
   { id: "hoodie", name: "Hoodie", icon: HoodieIcon, config: null },
-  { id: "mug", name: "Mug", icon: Coffee01Icon, config: null },
+  { id: "mug", name: "Mug", icon: Coffee01Icon, config: mug },
   { id: "wallart", name: "Wall Art", icon: Image01Icon, config: null },
   { id: "pillow", name: "Pillow", icon: BedIcon, config: null },
   { id: "bottle", name: "Bottle", icon: MedicineBottle01Icon, config: null },

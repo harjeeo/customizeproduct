@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useProductStore } from "../../store/productStore";
 import { scalePathD } from "../../lib/svgPath";
+import PreviewView3D from "../PreviewView3D/PreviewView3D";
 
 export default function PreviewView() {
   const product = useProductStore((s) => s.product);
@@ -100,6 +101,12 @@ export default function PreviewView() {
         ) : (
           layersBox
         )}
+
+        <PreviewView3D
+          activeSide={activeSide}
+          canvasApi={canvasApi}
+          activeSideId={activeSideId}
+        />
       </div>
     </div>
   );
