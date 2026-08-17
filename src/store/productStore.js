@@ -5,7 +5,9 @@ export const useProductStore = create((set, get) => ({
   product: tshirt,
   activeSideId: tshirt.sides[0].id,
   view: "edit", // "edit" | "preview"
-  zoom: 14,
+  zoom: 100,
+  pan: { x: 0, y: 0 },
+  panMode: false,
 
   selectedLayerId: null,
   // panelValues mirrors the selected fabric object's transform in human units
@@ -24,7 +26,15 @@ export const useProductStore = create((set, get) => ({
 
   setView: (view) => set({ view }),
 
-  setZoom: (zoom) => set({ zoom: Math.min(200, Math.max(5, zoom)) }),
+  setZoom: (zoom) => set({ zoom: Math.min(400, Math.max(5, zoom)) }),
+
+  setPan: (pan) => set({ pan }),
+  panBy: (dx, dy) =>
+    set((state) => ({ pan: { x: state.pan.x + dx, y: state.pan.y + dy } })),
+  resetView: () => set({ zoom: 100, pan: { x: 0, y: 0 } }),
+
+  setPanMode: (panMode) => set({ panMode }),
+  togglePanMode: () => set((state) => ({ panMode: !state.panMode })),
 
   setSelection: (layerId, panelValues, meta) =>
     set({ selectedLayerId: layerId, panelValues, selectedLayerMeta: meta }),

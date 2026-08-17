@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
 import { useProductStore } from "../../store/productStore";
 import {
@@ -21,13 +21,19 @@ export default function Canvas() {
   const canvasElRef = useRef(null);
   const fabricRef = useRef(null);
   const sideObjectsRef = useRef({});
-  const [scale, setScale] = useState(1);
+  const hasFitRef = useRef(false);
+  const panDragRef = useRef(null);
 
   const product = useProductStore((s) => s.product);
   const activeSideId = useProductStore((s) => s.activeSideId);
   const setCanvasApi = useProductStore((s) => s.setCanvasApi);
   const setSelection = useProductStore((s) => s.setSelection);
   const clearSelection = useProductStore((s) => s.clearSelection);
+  const zoom = useProductStore((s) => s.zoom);
+  const setZoom = useProductStore((s) => s.setZoom);
+  const pan = useProductStore((s) => s.pan);
+  const panBy = useProductStore((s) => s.panBy);
+  const panMode = useProductStore((s) => s.panMode);
 
   const activeSide = product.sides.find((s) => s.id === activeSideId);
 
@@ -67,23 +73,39 @@ export default function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // fit-to-container scaling
+  // fit the canvas to the container once, on first measurement only —
+  // after that the user drives zoom/pan themselves via the bottom bar.
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const ro = new ResizeObserver(() => {
+      if (hasFitRef.current) return;
       const availW = el.clientWidth - 64;
       const availH = el.clientHeight - 64;
-      const s = Math.min(
+      if (availW <= 0 || availH <= 0) return;
+      const fit = Math.min(
         availW / product.canvas.width,
         availH / product.canvas.height,
         1.1
       );
-      setScale(s > 0 ? s : 1);
+      if (fit > 0) {
+        hasFitRef.current = true;
+        useProductStore.getState().setZoom(fit * 100);
+      }
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, [product.canvas.width, product.canvas.height]);
+
+  // toggle fabric interactivity while the hand/pan tool is active
+  useEffect(() => {
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+    canvas.selection = !panMode;
+    canvas.skipTargetFind = panMode;
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+  }, [panMode]);
 
   // swap objects when side changes
   useEffect(() => {
@@ -258,17 +280,49 @@ export default function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSideId, product, setCanvasApi, setSelection, clearSelection]);
 
+  const handlePointerDown = (e) => {
+    if (!panMode) return;
+    panDragRef.current = { x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const handlePointerMove = (e) => {
+    if (!panMode || !panDragRef.current) return;
+    const dx = e.clientX - panDragRef.current.x;
+    const dy = e.clientY - panDragRef.current.y;
+    panDragRef.current = { x: e.clientX, y: e.clientY };
+    panBy(dx, dy);
+  };
+  const handlePointerUp = (e) => {
+    panDragRef.current = null;
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+  };
+
+  const handleWheel = (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    setZoom(zoom - e.deltaY * 0.4);
+  };
+
   return (
     <div
       ref={wrapperRef}
-      className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#eef0e9]"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      onWheel={handleWheel}
+      className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-[#eef0e9] ${
+        panMode ? (panDragRef.current ? "cursor-grabbing" : "cursor-grab") : ""
+      }`}
     >
       <div
         className="relative"
         style={{
           width: product.canvas.width,
           height: product.canvas.height,
-          transform: `scale(${scale})`,
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`,
         }}
       >
         <img
