@@ -1,5 +1,7 @@
 import mugMockup from "./mug-mockup.svg";
 import previewFront from "./preview-front.jpg";
+import previewLeft from "./preview-left.jpg";
+import previewRight from "./preview-right.jpg";
 
 // A mug's print wraps around the cylinder, so the editor shows the
 // flattened/unrolled print area — a wide rectangle — rather than a product
@@ -22,15 +24,32 @@ export const mug = {
         widthIn: 8.5,
         heightIn: 3.53,
       },
-      // Flat front-on photo used by the regular (non-3D) Preview tab —
-      // approximates the label as a flat rectangle on the visible front face.
-      previewMockup: previewFront,
-      previewPrintArea: {
-        xPct: 35.0,
-        yPct: 38.0,
-        widthPct: 36.0,
-        heightPct: 26.0,
-      },
+      // Multiple flat photo angles for the (non-3D) Preview tab's mockup
+      // switcher — each with its own print-area box on that specific photo.
+      // The first entry doubles as the default previewMockup/previewPrintArea.
+      previewMockups: [
+        {
+          id: "front",
+          label: "Front",
+          mockup: previewFront,
+          printArea: { xPct: 35.0, yPct: 38.0, widthPct: 36.0, heightPct: 26.0 },
+        },
+        {
+          id: "left",
+          label: "Left",
+          mockup: previewLeft,
+          printArea: { xPct: 40.0, yPct: 38.0, widthPct: 34.0, heightPct: 26.0 },
+        },
+        {
+          id: "right",
+          label: "Right",
+          mockup: previewRight,
+          printArea: { xPct: 27.0, yPct: 38.0, widthPct: 34.0, heightPct: 26.0 },
+        },
+      ],
+      // Bends the flat 2D Preview's design slightly so it reads as wrapped
+      // around the mug's curve instead of a flat sticker on top.
+      curvedPreview: true,
       // Marks this product as eligible for the rotating Three.js 3D Preview
       // (see PreviewView3D) — the print wraps this fraction of the mug's
       // circumference, starting at this angle (handle sits in the gap).

@@ -8,6 +8,7 @@ export const useProductStore = create((set, get) => ({
   zoom: 100,
   pan: { x: 0, y: 0 },
   panMode: false,
+  mockupViewId: null,
 
   selectedLayerId: null,
   // panelValues mirrors the selected fabric object's transform in human units
@@ -46,7 +47,15 @@ export const useProductStore = create((set, get) => ({
     }),
 
   setActiveSide: (sideId) =>
-    set({ activeSideId: sideId, selectedLayerId: null, panelValues: null, selectedLayerMeta: null }),
+    set({
+      activeSideId: sideId,
+      selectedLayerId: null,
+      panelValues: null,
+      selectedLayerMeta: null,
+      mockupViewId: null,
+    }),
+
+  setMockupViewId: (mockupViewId) => set({ mockupViewId }),
 
   setView: (view) => set({ view }),
 
