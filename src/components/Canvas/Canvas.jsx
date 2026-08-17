@@ -274,6 +274,28 @@ export default function Canvas() {
         getCanvas().requestRenderAll();
         syncSelection();
       },
+
+      // used by the Preview view to render the current design layers
+      // onto the realistic photo mockup instead of the fabric canvas.
+      getLayersForSide: (sideId) => {
+        const canvas = getCanvas();
+        const side = product.sides.find((s) => s.id === sideId);
+        const objs = sideObjectsRef.current[sideId] ?? [];
+        return objs.map((obj) => {
+          const pv = objectToPanelValues(obj, canvas, side.printArea);
+          return {
+            id: obj.__layerId,
+            dataUrl: obj.__meta?.thumbnail,
+            leftPct: pv.positionLeftPct,
+            topPct: pv.positionTopPct,
+            widthPct: (pv.widthIn / side.printArea.widthIn) * 100,
+            heightPct: (pv.heightIn / side.printArea.heightIn) * 100,
+            angle: pv.rotateDeg,
+            flipX: !!obj.flipX,
+            flipY: !!obj.flipY,
+          };
+        });
+      },
     };
 
     setCanvasApi(api);
