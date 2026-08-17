@@ -8,6 +8,7 @@ export default function PreviewView() {
   const [layers, setLayers] = useState([]);
 
   const activeSide = product.sides.find((s) => s.id === activeSideId);
+  const pa = activeSide.previewPrintArea;
 
   useEffect(() => {
     if (!canvasApi) return;
@@ -23,13 +24,14 @@ export default function PreviewView() {
           className="absolute inset-0 h-full w-full select-none rounded-lg object-cover"
           draggable={false}
         />
+
         <div
           className="absolute overflow-hidden"
           style={{
-            left: `${activeSide.previewPrintArea.xPct}%`,
-            top: `${activeSide.previewPrintArea.yPct}%`,
-            width: `${activeSide.previewPrintArea.widthPct}%`,
-            height: `${activeSide.previewPrintArea.heightPct}%`,
+            left: `${pa.xPct}%`,
+            top: `${pa.yPct}%`,
+            width: `${pa.widthPct}%`,
+            height: `${pa.heightPct}%`,
           }}
         >
           {layers.map((layer) => (
@@ -47,16 +49,59 @@ export default function PreviewView() {
                 transformOrigin: "center center",
               }}
             >
-              <img
-                src={layer.dataUrl}
-                alt=""
-                className="h-full w-full select-none"
-                style={{ objectFit: "fill", mixBlendMode: "multiply" }}
-                draggable={false}
-              />
+              {/* mix-blend-mode and filter fight each other when set on the
+                  same element (the filter's output gets silently dropped),
+                  so the warp lives on the inner img and the blend on this
+                  outer wrapper: warp first, then blend the already-warped
+                  pixels against the fabric behind for a printed-on look. */}
+              <div className="h-full w-full" style={{ mixBlendMode: "multiply" }}>
+                <img
+                  src={layer.dataUrl}
+                  alt=""
+                  className="h-full w-full select-none"
+                  style={{
+                    objectFit: "fill",
+                    filter: `url(#fabric-warp-${activeSideId})`,
+                  }}
+                  draggable={false}
+                />
+              </div>
             </div>
           ))}
         </div>
+
+        <svg width="0" height="0" style={{ position: "absolute" }}>
+          <defs>
+            {product.sides.map((side) => (
+              <filter
+                key={side.id}
+                id={`fabric-warp-${side.id}`}
+                x="-15%"
+                y="-15%"
+                width="130%"
+                height="130%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feImage
+                  href={side.previewDisplacementMap}
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="100%"
+                  preserveAspectRatio="none"
+                  result="dispMap"
+                />
+                <feDisplacementMap
+                  in="SourceGraphic"
+                  in2="dispMap"
+                  scale="26"
+                  xChannelSelector="R"
+                  yChannelSelector="G"
+                />
+              </filter>
+            ))}
+          </defs>
+        </svg>
       </div>
     </div>
   );
