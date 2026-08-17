@@ -73,7 +73,16 @@ export default function PreviewView() {
           <>
             <div
               className="absolute inset-0"
-              style={{ clipPath: `url(#${clipId})` }}
+              style={{
+                clipPath: `url(#${clipId})`,
+                // subtle bevel/emboss along the print edge so it reads as
+                // pressed into the product surface rather than a flat sticker
+                boxShadow:
+                  "inset 0 1px 1px rgba(255,255,255,0.65), " +
+                  "inset 0 -1.5px 2px rgba(0,0,0,0.28), " +
+                  "inset 1px 0 1px rgba(255,255,255,0.35), " +
+                  "inset -1px 0 1px rgba(0,0,0,0.18)",
+              }}
             >
               {layersBox}
             </div>
