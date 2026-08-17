@@ -11,6 +11,9 @@ export default function PreviewView() {
   const activeSide = product.sides.find((s) => s.id === activeSideId);
   const pa = activeSide.previewPrintArea;
   const clipId = `preview-clip-${activeSideId}`;
+  // Preview prefers its own (usually bigger, true full-bleed) clip shape,
+  // falling back to the editor's clip if a product doesn't need a separate one.
+  const previewClipD = activeSide.previewClipPathD ?? activeSide.clipPathD;
 
   useEffect(() => {
     if (!canvasApi) return;
@@ -66,7 +69,7 @@ export default function PreviewView() {
           draggable={false}
         />
 
-        {activeSide.clipPathD ? (
+        {previewClipD ? (
           <>
             <div
               className="absolute inset-0"
@@ -77,7 +80,10 @@ export default function PreviewView() {
             <svg width="0" height="0" style={{ position: "absolute" }}>
               <defs>
                 <clipPath id={clipId} clipPathUnits="objectBoundingBox">
-                  <path d={scalePathD(activeSide.clipPathD, 1000)} />
+                  <path
+                    d={scalePathD(previewClipD, 1000)}
+                    clipRule={activeSide.previewClipRule}
+                  />
                 </clipPath>
               </defs>
             </svg>
