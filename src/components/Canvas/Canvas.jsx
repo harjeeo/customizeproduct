@@ -16,6 +16,18 @@ import {
 let layerIdCounter = 1;
 const nextLayerId = () => `layer-${layerIdCounter++}`;
 
+// clipPathD is authored against a 0-1000 viewBox (matching the mockup SVGs);
+// scale it into the canvas's own pixel space and clip the whole canvas to
+// it, so designs can't render outside the product body or over cutouts
+// (like a phone case's camera bump) even while being dragged/resized.
+function buildCanvasClipPath(clipPathD, canvasWidth) {
+  const scale = canvasWidth / 1000;
+  const clip = new fabric.Path(clipPathD, { scaleX: scale, scaleY: scale });
+  clip.set({ left: clip.left * scale, top: clip.top * scale });
+  clip.absolutePositioned = true;
+  return clip;
+}
+
 export default function Canvas() {
   const wrapperRef = useRef(null);
   const canvasElRef = useRef(null);
@@ -107,7 +119,8 @@ export default function Canvas() {
     canvas.requestRenderAll();
   }, [panMode]);
 
-  // swap objects when side changes
+  // swap objects when side changes, and clip the canvas to this side's
+  // product-body shape (if it has one) so designs can't render outside it
   useEffect(() => {
     const canvas = fabricRef.current;
     if (!canvas) return;
@@ -116,8 +129,12 @@ export default function Canvas() {
     (sideObjectsRef.current[activeSideId] ?? []).forEach((o) =>
       canvas.add(o)
     );
+    canvas.clipPath = activeSide.clipPathD
+      ? buildCanvasClipPath(activeSide.clipPathD, product.canvas.width)
+      : undefined;
     canvas.requestRenderAll();
     clearSelection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSideId, clearSelection]);
 
   // expose imperative API to the rest of the app
@@ -353,15 +370,32 @@ export default function Canvas() {
           className="pointer-events-none absolute inset-0 h-full w-full select-none"
           draggable={false}
         />
-        <div
-          className="pointer-events-none absolute border border-dashed border-neutral-400"
-          style={{
-            left: `${activeSide.printArea.xPct}%`,
-            top: `${activeSide.printArea.yPct}%`,
-            width: `${activeSide.printArea.widthPct}%`,
-            height: `${activeSide.printArea.heightPct}%`,
-          }}
-        />
+        {activeSide.clipPathD ? (
+          <svg
+            className="pointer-events-none absolute inset-0"
+            width={product.canvas.width}
+            height={product.canvas.height}
+            viewBox="0 0 1000 1000"
+          >
+            <path
+              d={activeSide.clipPathD}
+              fill="none"
+              stroke="#a3a3a3"
+              strokeWidth="3"
+              strokeDasharray="10 8"
+            />
+          </svg>
+        ) : (
+          <div
+            className="pointer-events-none absolute border border-dashed border-neutral-400"
+            style={{
+              left: `${activeSide.printArea.xPct}%`,
+              top: `${activeSide.printArea.yPct}%`,
+              width: `${activeSide.printArea.widthPct}%`,
+              height: `${activeSide.printArea.heightPct}%`,
+            }}
+          />
+        )}
         <canvas ref={canvasElRef} />
       </div>
     </div>
