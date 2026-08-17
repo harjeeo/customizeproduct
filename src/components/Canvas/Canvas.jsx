@@ -22,7 +22,11 @@ const nextLayerId = () => `layer-${layerIdCounter++}`;
 // (like a phone case's camera bump) even while being dragged/resized.
 function buildCanvasClipPath(clipPathD, canvasWidth) {
   const scale = canvasWidth / 1000;
-  const clip = new fabric.Path(clipPathD, { scaleX: scale, scaleY: scale });
+  const clip = new fabric.Path(clipPathD, {
+    scaleX: scale,
+    scaleY: scale,
+    fillRule: "evenodd",
+  });
   clip.set({ left: clip.left * scale, top: clip.top * scale });
   clip.absolutePositioned = true;
   return clip;
