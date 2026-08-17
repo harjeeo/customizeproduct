@@ -89,12 +89,17 @@ export default function PreviewView() {
                   width="100%"
                   height="100%"
                   preserveAspectRatio="none"
+                  result="dispMapRaw"
+                />
+                <feGaussianBlur
+                  in="dispMapRaw"
+                  stdDeviation="2.5"
                   result="dispMap"
                 />
                 <feDisplacementMap
                   in="SourceGraphic"
                   in2="dispMap"
-                  scale="26"
+                  scale="9"
                   xChannelSelector="R"
                   yChannelSelector="G"
                 />
